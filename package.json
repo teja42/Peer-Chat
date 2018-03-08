@@ -1,0 +1,23 @@
+{
+  "name": "rigel-chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run": "nodemon --exec 'electron ./Core/main' --watch './Core/main.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teja42/Rigel-Chat.git"
+  },
+  "author": "Teja",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/teja42/Rigel-Chat/issues"
+  },
+  "homepage": "https://github.com/teja42/Rigel-Chat#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
