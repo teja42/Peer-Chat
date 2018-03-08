@@ -7,7 +7,8 @@ app.on("ready",()=>{
    loadWindow = new BrowserWindow({
       frame: false,
       width: 700,
-      height:400
+      height:400,
+      resizable: false
    });
    loadWindow.loadURL(`file://${__dirname}/../UI/index.html`);
 });
