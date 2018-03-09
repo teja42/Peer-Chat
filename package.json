@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "run": "nodemon --exec 'electron ./Core/main' --watch './Core/main.js'"
+    "run": "nodemon --exec 'electron ./Src/Core/main' --watch './Src/Core/main.js'"
   },
   "repository": {
     "type": "git",
