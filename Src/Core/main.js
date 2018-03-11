@@ -18,8 +18,8 @@ app.on("ready",()=>{
    ipcMain.on('dom-ready',()=>{
       console.log("Window loaded");
 
-      conMan = require("./connectionManager")(()=>{
-         loadWindow.webContents.send("loaded-module","Connection Manager");
+      conMan = require("./controller")(()=>{
+         loadWindow.webContents.send("loaded-module","Controller");
       });
 
    });

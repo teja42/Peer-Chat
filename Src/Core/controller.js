@@ -3,6 +3,13 @@
 var app = require('express')();
 var server = require('http').createServer(app);
 const socketIOClient = require("socket.io-client");
+const events = require("events");
+
+let cipher = require("./cipher");
+
+console.log(cipher.generateNewRsaPair());
+
+let event = new events.EventEmitter();
 
 class controller {
    constructor(loadCallBack){
@@ -16,16 +23,21 @@ class controller {
          console.log(socket.id);
          socket.on("userData",(data)=>userData=data);
 
-         socket.on("message",(msg)=>{
-            
-         });
+         socket.emit("userData",{});
 
+         socket.on("message",(msg)=>{
+            console.log(cipher.decrypt(userData.key,msg));
+         });
+         
       });
 
       server.listen(4250,()=>{
          loadCallBack();
       });
    }
+
+   sendMessage(socketId){}
+
 }
 
 module.exports = (x)=>{

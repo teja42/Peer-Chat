@@ -1,7 +1,9 @@
 var NodeRSA = require('node-rsa');
-var key = new NodeRSA({b: 512});
+var key = new NodeRSA({b: 2048});
 
-console.log(key);
+let priv = key.exportKey("pkcs1-private-pem");
+
+let newRsa = new NodeRSA(priv);
 
 var text = 'Hello RSA!';
 var encrypted = key.encrypt(text, 'base64');
