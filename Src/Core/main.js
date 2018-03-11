@@ -1,16 +1,29 @@
 const electron = require("electron");
-const {app,BrowserWindow} = electron;
+const {app,BrowserWindow,ipcMain} = electron;
 
 let loadWindow, mainWindow;
+
+let conMan/*(Short for Connection Manager)*/;
 
 app.on("ready",()=>{
    loadWindow = new BrowserWindow({
       frame: false,
-      width: 700,
+      width: 600,
       height:400,
       resizable: false
    });
-   loadWindow.loadURL(`file://${__dirname}/../UI/index.html`);
+
+   loadWindow.loadURL(`file://${__dirname}/../UI/mainLoad.html`);
+
+   ipcMain.on('dom-ready',()=>{
+      console.log("Window loaded");
+
+      conMan = require("./connectionManager")(()=>{
+         loadWindow.webContents.send("loaded-module","Connection Manager");
+      });
+
+   });
+
 });
 
 app.on("window-all-close",()=>app.exit(0));

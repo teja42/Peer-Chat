@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8" />
+   <title>Rigel-Chat - Privacy when you need it.</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" type="text/css" href="./Style/common.css">
+</head>
+<body>
+   <div id="left">
+      <div class="main-text">
+            <br/>
+            <h1>Rigel-Chat</h1>
+            <p>Privacy when you need it</p>
+      </div>
+         
+      <div>
+         <img x-loader-anim src="./Style/loader.svg"/> <br/>
+         <span id="loading-module">Loading Stuff</span>
+      </div>
+   </div>
+
+</body>
+<style>
+
+   *{
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      overflow: hidden;
+   }
+
+   body{
+      font-family: "Roboto";
+      color: white;
+   }
+
+   .main-text{
+      margin-bottom: 50px;
+   }
+
+   #left{
+      position: absolute;
+      background-color: #1a1a1a;
+      width: 100%;
+      height: 100vh;
+   }
+
+   [x-loader-anim]{
+      width: 150px;
+   }
+
+</style>
+<script>
+   let $ = (s)=>document.querySelector(s);
+   const {ipcRenderer} = require("electron");
+
+   ipcRenderer.on("loaded-module",(x,msg)=>{
+      $("#loading-module").innerHTML = "Done loading "+msg+". ";
+   });
+
+   window.onload = ()=>ipcRenderer.send("dom-ready");
+
+</script>
+</html>
