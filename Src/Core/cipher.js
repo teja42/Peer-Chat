@@ -16,9 +16,7 @@ class Cipher {
       let thread = threads.spawn(()=>{
          let keyPair = new Rsa({b:keylength});
          console.log(keyPair);
-         return keyPair;
       });
-      console.log(thread);
    }
 
 }

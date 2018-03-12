@@ -1,3 +1,4 @@
+// Load only absolutely required modules for loadWindow to show up for fast startup.
 const electron = require("electron");
 const {app,BrowserWindow,ipcMain} = electron;
 
@@ -14,12 +15,12 @@ app.on("ready",()=>{
    });
    loadWindow.loadURL(`file://${__dirname}/../UI/mainLoad.html`);
 
-   // Load threads module after loading loadWindow for quick startup of app.
+   // Load Module's after loading loadWindow for quick startup of app.
    const threads = require("threads");
    threads.config.set({
       basepath:{
          node: __dirname,
-         web: "localhost:4250"
+         web: "localhost:4250/"
       }
    });
 
@@ -27,11 +28,25 @@ app.on("ready",()=>{
    ipcMain.on('dom-ready',()=>{
 
       controller = threads.spawn("./controller.js");
+      controller.send();
       controller.on("message",(msg)=>{
-         if(msg=="server-online") loadWindow.webContents.send("loaded-module","Controller");
+         if(!msg.evt=="server-online") return;
+         loadWindow.webContents.send("loaded-module","Done Loading Controller");
+         mainWindow = new BrowserWindow({show: false});
+         mainWindow.loadURL(`file://${__dirname}/../UI/index.html`);
+         loadWindow.webContents.send("loaded-module","Loading app...");
+
+         mainWindow.on('ready-to-show',()=>{
+            loadWindow.webContents.send("loaded-module","Done. Launching app...");
+            mainWindow.show();
+            loadWindow.close();
+         });
       });
 
+      loadWindow.on("close",()=>loadWindow = null);
+
    });
+
 });
 
 app.on("window-all-close",()=>app.exit(0));

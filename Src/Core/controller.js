@@ -1,15 +1,11 @@
 // This is main controller module. It also contains code for managing in/out connections.
 
-var app = require('express')();
-var server = require('http').createServer(app);
+let app = require('express')();
+let server = require('http').createServer(app);
 const socketIOClient = require("socket.io-client");
-const events = require("events");
+let event = new (require("events").EventEmitter)();
 
 let cipher = require("./cipher");
-
-console.log(cipher.generateNewRsaPair());
-
-let event = new events.EventEmitter();
 
 new (class {
    constructor(){
@@ -32,8 +28,9 @@ new (class {
       });
 
       server.listen(4250,()=>{
-         event.emit("server-online");
-      });
+         setTimeout(()=>event.emit("server-online"),300);
+         // Just in case the thread.send() is not executed quick enough or server started before 
+      });// thread.send() is executed. Also 300ms won't hurt and it's just one time thing.
    }
 
    sendMessage(socketId){}
@@ -41,5 +38,7 @@ new (class {
 })();
 
 module.exports = (input,send)=>{
-   event.on("server-online",()=>send("server-online"));
+   event.on("server-online",()=>send({
+      evt: "server-online"
+   }));
 }

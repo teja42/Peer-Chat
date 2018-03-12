@@ -56,10 +56,12 @@
    const {ipcRenderer} = require("electron");
 
    ipcRenderer.on("loaded-module",(x,msg)=>{
-      $("#loading-module").innerHTML = "Done loading "+msg+". ";
+      $("#loading-module").innerHTML = msg;
    });
 
    window.onload = ()=>ipcRenderer.send("dom-ready");
+
+   document.ondragstart = e=>e.preventDefault();
 
 </script>
 </html>
