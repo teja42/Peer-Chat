@@ -13,8 +13,8 @@ First make sure you have latest node.js . You can download it at https://nodejs.
 
 Then run these commands :
 
-git clone https://github.com/teja42/rigel-chat
-Cd Rigel-Chat
-npm install && sudo npm i electron -g --unsafe-perm
+git clone https://github.com/teja42/rigel-chat.git <br/>
+Cd Rigel-Chat <br/>
+npm install && sudo npm i electron -g --unsafe-perm <br/>
 npm run-script run
 
