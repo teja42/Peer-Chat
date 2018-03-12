@@ -6,11 +6,13 @@
 *{
    margin: 0;
    padding: 0;
+   -webkit-font-smoothing: subpixel-antialiased;
 }
 
 body{
    font-family: "Roboto";
    color: white;
+   font-size: 14px;
 }
 
 ::-webkit-scrollbar-thumb{
@@ -23,4 +25,8 @@ body{
 
 ::-webkit-scrollbar{
    width: 6px;
+}
+
+[x-center]{
+   text-align: center;
 }

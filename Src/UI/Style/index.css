@@ -6,15 +6,67 @@
 
 #sidebar{
    background-color: #292828;
-   width: 250px;
+   max-width: 250px;
 }
 
 #main,#sidebar{
    display: inline-block;
    height: 100vh;
    position: fixed;
+   z-index: 1;
 }
 
-#main{
-   height: 200vh;
+#sidebar>*{
+   display:inline-block;
+}
+
+#sidebar-icons{
+   width: 50px;
+   background-color: #474747;
+   height: 100%;
+}
+
+#sidebar-icons>i{
+   font-size: 40px;
+   padding-left: 5px;
+   color: #bbbaba;
+}
+
+#sidebar-icons>i:hover{
+   color: #ffffff;
+   cursor: pointer;
+}
+
+.tooltip {
+   position: relative;
+   display: inline-block;
+}
+
+.tooltip .tooltiptext {
+   visibility: hidden;
+   background-color: black;
+   color: #fff;
+   text-align: center;
+   padding: 5px;
+   font-size: 14px;
+   position: absolute;
+   top: 5px;
+   left: 105%; 
+}
+
+.tooltip:hover .tooltiptext {
+   visibility: visible;
+   z-index: 9999;
+}
+
+#sidebar-item-view{
+   width: 200px;
+}
+
+#eKeys{
+   transform: rotateZ(45deg);
+   margin-left: 10px;
+}
+#eKeys>span{
+   transform: rotateZ(-45deg);
 }
