@@ -1,9 +1,9 @@
 const electron = require("electron");
 const {app,BrowserWindow,ipcMain} = electron;
 
+// Intitalize global variables;
 let loadWindow, mainWindow;
-
-let conMan/*(Short for Connection Manager)*/;
+let controller;
 
 app.on("ready",()=>{
    loadWindow = new BrowserWindow({
@@ -12,18 +12,26 @@ app.on("ready",()=>{
       height:400,
       resizable: false
    });
-
    loadWindow.loadURL(`file://${__dirname}/../UI/mainLoad.html`);
 
-   ipcMain.on('dom-ready',()=>{
-      console.log("Window loaded");
+   // Load threads module after loading loadWindow for quick startup of app.
+   const threads = require("threads");
+   threads.config.set({
+      basepath:{
+         node: __dirname,
+         web: "localhost:4250"
+      }
+   });
 
-      conMan = require("./controller")(()=>{
-         loadWindow.webContents.send("loaded-module","Controller");
+   // Start loading other modules after loadWindow has rendered.
+   ipcMain.on('dom-ready',()=>{
+
+      controller = threads.spawn("./controller.js");
+      controller.on("message",(msg)=>{
+         if(msg=="server-online") loadWindow.webContents.send("loaded-module","Controller");
       });
 
    });
-
 });
 
 app.on("window-all-close",()=>app.exit(0));

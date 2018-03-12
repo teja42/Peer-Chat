@@ -11,8 +11,8 @@ console.log(cipher.generateNewRsaPair());
 
 let event = new events.EventEmitter();
 
-class controller {
-   constructor(loadCallBack){
+new (class {
+   constructor(){
       let io = require('socket.io')(server);
       // let ioc = new socketIOClient("http://localhost:4250",{
       //    transports: ['websocket']
@@ -32,14 +32,14 @@ class controller {
       });
 
       server.listen(4250,()=>{
-         loadCallBack();
+         event.emit("server-online");
       });
    }
 
    sendMessage(socketId){}
 
-}
+})();
 
-module.exports = (x)=>{
-   return new controller(x);
+module.exports = (input,send)=>{
+   event.on("server-online",()=>send("server-online"));
 }
