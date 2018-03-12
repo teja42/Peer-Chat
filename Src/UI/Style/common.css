@@ -2,3 +2,25 @@
    src: "./Roboto-Regular.tff";
    font-family: "Roboto"
 }
+
+*{
+   margin: 0;
+   padding: 0;
+}
+
+body{
+   font-family: "Roboto";
+   color: white;
+}
+
+::-webkit-scrollbar-thumb{
+   background-color: #f5f4f4;
+}
+
+::-webkit-scrollbar-button{
+   display: none;
+}
+
+::-webkit-scrollbar{
+   width: 6px;
+}

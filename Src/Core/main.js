@@ -32,7 +32,11 @@ app.on("ready",()=>{
       controller.on("message",(msg)=>{
          if(!msg.evt=="server-online") return;
          loadWindow.webContents.send("loaded-module","Done Loading Controller");
-         mainWindow = new BrowserWindow({show: false});
+         mainWindow = new BrowserWindow({
+            show: false,
+            minWidth: 800,
+            minHeight: 600
+         });
          mainWindow.loadURL(`file://${__dirname}/../UI/index.html`);
          loadWindow.webContents.send("loaded-module","Loading app...");
 
