@@ -30,3 +30,7 @@ body{
 [x-center]{
    text-align: center;
 }
+
+#eKey-view{
+   display: none;
+}

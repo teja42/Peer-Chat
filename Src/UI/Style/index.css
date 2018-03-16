@@ -1,11 +1,12 @@
 #main{
-   background-color: #1a1a1a;
+   background-color: #141414;
    width: 100%;
    margin-left: 250px;
+   padding: 8px;
 }
 
 #sidebar{
-   background-color: #292828;
+   background-color: #1a1a1a;
    max-width: 250px;
 }
 
@@ -21,15 +22,16 @@
 }
 
 #sidebar-icons{
-   width: 50px;
-   background-color: #474747;
+   width: 48px;
+   background-color: #141414;
+   border-right: 2px solid #3632f1;
    height: 100%;
 }
 
 #sidebar-icons>i{
    font-size: 40px;
    padding-left: 5px;
-   color: #bbbaba;
+   color: #e6e6e6;
 }
 
 #sidebar-icons>i:hover{
