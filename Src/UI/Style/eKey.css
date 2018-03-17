@@ -1,0 +1,19 @@
+#eKey-view{
+   display: none;
+}
+
+#eKeys{
+   transform: rotateZ(45deg);
+   margin-left: 10px;
+}
+#eKeys>span{
+   transform: rotateZ(-45deg);
+}
+
+.eKey-view-key{
+   padding: 10px;
+   margin: 10px;
+   border: 1px solid #b4b4b4;
+   width: 60%;
+   border-radius: 2px;
+}

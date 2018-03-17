@@ -7,6 +7,7 @@
    <link rel="stylesheet" type="text/css" href="./Style/common.css">
    <link rel="stylesheet" type="text/css" href="./Style/ionicons.min.css">
    <link rel="stylesheet" type="text/css" href="./Style/index.css">
+   <link rel="stylesheet" type="text/css" href="./Style/eKey.css">
 </head>
 <body>
    <div id="sidebar">
@@ -28,16 +29,40 @@
       </div>
 
       <div id="eKey-view">
-         <h3>Manage your Encryption Keys</h3>
-
-         <div id="eKey:view-keys">
-            
+         <div class="header">
+            <h3>Manage your Encryption Keys</h3>
          </div>
+
+         <div class="eKey-view-key">
+            <h3>Generate New Key</h3> <br>
+            <h3>Algorithm : 
+               <select required id="eKey-selectAlgo"> 
+                  <option value="rsa2048">RSA 2048</option>
+                  <option value="rsa4096">RSA 4096</option>
+               </select>
+            </h3>
+            <button btn-blue>Generate</button>
+         </div>
+
+         <!-- Encryption Key div's load here with mustache.js -->
       </div>
    </div>
 
 </body>
+
+<script src="./Scripts/mustache.min.js"></script>
+
 <script src="./Scripts/common.js"></script>
 <script src="./Scripts/sidebar.js"></script>
 <script src="./Scripts/eKeys.js"></script>
+
+<script type="template/text" id="eKey-template">
+   <div class="eKey-view-key">
+      <h3>Key Nick Name : <input xid="{{id}}" type="text" value="{{knc}}"/></h3><br>
+      <h3>Public Key : <br> <p>{{pubKey}}</p></h3> <br>
+      <h3>Private Key : <br> <p>{{priKey}}</p></h3> <br>
+      <button xid="{{id}}" btn-danger>Delete</button>
+   </div>
+</script>
+
 </html>

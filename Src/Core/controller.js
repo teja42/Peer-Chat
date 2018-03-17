@@ -8,7 +8,7 @@ const socketIOClient = require("socket.io-client");
 let cipher = require("./cipher");
 let dbMan = require("./dbManager");
 
-module.exports = class { // A Class to manage connections.
+new(class { // A Class to manage connections.
    constructor(){
       let io = require('socket.io')(server);
       // let ioc = new socketIOClient("http://localhost:4250",{
@@ -28,9 +28,9 @@ module.exports = class { // A Class to manage connections.
          
       });
 
-      server.listen(4250,process.$event.emit("server-online"));
+      server.listen(4250,()=>process.$event.emit("server-online"));
    }
 
    sendMessage(socketId){}
 
-};
+})();

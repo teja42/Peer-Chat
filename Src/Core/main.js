@@ -26,8 +26,10 @@ app.on("ready",()=>{
       require("./controller");
       process.$event.on("server-online",()=>{
 
+         console.log("Server online.");
+
          mainWindow = new BrowserWindow({
-            minWidth: 700,
+            minWidth: 800,
             minHeight: 600,
             show: false
          });
