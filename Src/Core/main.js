@@ -23,16 +23,14 @@ app.on("ready",()=>{
       process.DATA_DIR = path.join(__dirname,"../../Data/");
       process.$event = new (require("events").EventEmitter)();
 
-      require("./controller");
+      mainWindow = new BrowserWindow({
+         minWidth: 800,
+         minHeight: 600,
+         show: false
+      });
+
+      new(require("./controller"))(mainWindow);
       process.$event.on("server-online",()=>{
-
-         console.log("Server online.");
-
-         mainWindow = new BrowserWindow({
-            minWidth: 800,
-            minHeight: 600,
-            show: false
-         });
 
          mainWindow.loadURL(`file://${__dirname}/../UI/index.html`);
          loadWindow.webContents.send("loaded-module","Loading app...");

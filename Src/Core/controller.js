@@ -3,13 +3,15 @@
 let app = require('express')();
 let server = require('http').createServer(app);
 const socketIOClient = require("socket.io-client");
+const {ipcMain} = require("electron");
 
 // Custom Modules
-let cipher = require("./cipher");
-let dbMan = require("./dbManager");
+let cipher = new(require("./cipher"))();
+let dbMan = new(require("./dbManager"))();
 
-new(class { // A Class to manage connections.
-   constructor(){
+module.exports = class { // A Class to manage connections.
+   constructor(mainWin){
+      this.mainWindow = mainWin;
       let io = require('socket.io')(server);
       // let ioc = new socketIOClient("http://localhost:4250",{
       //    transports: ['websocket']
@@ -29,8 +31,23 @@ new(class { // A Class to manage connections.
       });
 
       server.listen(4250,()=>process.$event.emit("server-online"));
+
+      ipcMain.on("eKey:u:genNewKey",async (key)=>{
+         if(key.algo == 'rsa'){
+            let priKey = await cipher.generateNewRsaPair(key.length);
+            let db = await dbMan.addeKey({
+               key: priKey,
+               algo: key.algo,
+               length: key.length
+            });
+            this.mainWindow.webContents.send("eKey:s:genNewKey",db);
+         }
+      });
+
    }
 
    sendMessage(socketId){}
 
-})();
+}
+
+

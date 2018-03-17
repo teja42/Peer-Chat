@@ -3,7 +3,7 @@
 const Rsa = require("node-rsa");
 const threads = require("threads");
 
-class Cipher {
+module.exports = class {
    decrypt(key,msg){
       return msg;
    }
@@ -13,12 +13,18 @@ class Cipher {
    }
 
    generateNewRsaPair(keylength=2048){
-      let thread = threads.spawn(()=>{
-         let keyPair = new Rsa({b:keylength});
-         console.log(keyPair);
+      return new Promise((resolve,reject)=>{
+         let thread = threads.spawn((x)=>{
+            return new Promise((resolve,reject)=>{
+               const Rsa = require("node-rsa");
+               let keyPair = new Rsa({b:x});
+               let pri = keyPair.exportKey("pkcs1-private-pem");
+               resolve(pri);
+            });  
+         });
+         thread.send(keylength);
+         thread.on("message",(response)=>resolve(response));
       });
    }
 
 }
-
-module.exports = new Cipher();
