@@ -1,11 +1,13 @@
 {
   "name": "rigel-chat",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "./Src/Core/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "run": "nodemon --exec 'electron ./Src/Core/main' --watch './Src/Core/main.js'"
+    "run": "nodemon --exec 'electron ./Src/Core/main' --watch './Src/Core/main.js'",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": {
     "type": "git",
@@ -25,5 +27,11 @@
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
     "threads": "^0.10.1"
+  },
+  "build": {
+    "appId": "rigel.chat",
+    "mac": {
+      "category": "rigel.chat.security.privacy"
+    }
   }
 }

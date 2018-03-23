@@ -12,12 +12,23 @@
 <body>
    <div id="sidebar">
       <div id="sidebar-icons">
-         <i id="allUsers" class="ion-person-stalker tooltip">
-            <span class="tooltiptext">Previously Connected</span>
+
+         <i id="addUser" class="ion-person-add tooltip">
+               <span class="tooltiptext">Add new contact</span>
          </i>
+
+         <i id="allUsers" class="ion-person-stalker tooltip">
+            <span class="tooltiptext">View all contacts</span>
+         </i>
+
          <i id="eKeys" class="ion-key tooltip">
             <span class="tooltiptext">Manage encryption keys</span>
          </i>
+
+         <i id="hide-sidebar-view" class="ion-ios-arrow-back tooltip">
+               <span class="tooltiptext">Hide sidebar view. Use Esc as shortcut</span>
+         </i>
+
       </div>
       <div id="sidebar-item-view">
       </div>
@@ -26,6 +37,17 @@
    <div id="main">
       <div id="main-view">
          Main View
+      </div>
+
+      <div id="addContact">
+         <div class="header">
+            <h3>Add Contact</h3>
+         </div>
+         <div> <br>
+            <h3>Nickname : <input type="text" placeholder="nick"></h3> <br>
+            <h3>Connection : <input type="text" placeholder="8.8.8.8:4250"></h3><br>
+            <h3>Public key : (.pem file) <br><input type="file" accept=".pem"></h3>
+         </div>
       </div>
 
       <div id="eKey-view">
@@ -40,7 +62,10 @@
                   <option value="rsa_2048">RSA 2048</option>
                   <option value="rsa_4096">RSA 4096</option>
                </select>
-            </h3>
+            </h3><br>
+            <h3>Key Nick Name : <form id="eKey-newKnc-form">
+                  <input id="eKey-newKnc" type="text" required>
+            </form> </h3>
             <button btn-blue id="eKey-genBtn">Generate</button>
          </div>
 
@@ -58,7 +83,7 @@
 
 <script type="template/text" id="eKey-template">
    <div class="eKey-view-key">
-      <h3>Key Nick Name : <input xid="{{id}}" type="text" value="{{knc}}"/></h3><br>
+      <h3>Key Nick Name : {{knc}}</h3><br>
       <h3>Public Key : <br> <p>{{pubKey}}</p></h3> <br>
       <h3>Private Key : <br> <p>{{priKey}}</p></h3> <br>
       <button xid="{{id}}" btn-danger>Delete</button>

@@ -1,10 +1,11 @@
 /* Contains style for main and sidebar */
 
 #main{
-   background-color: #141414;
+   background-color: #0a0a0a;
    width: 100%;
    margin-left: 250px;
    padding: 8px;
+   overflow-y: scroll;
 }
 
 #sidebar{
@@ -67,8 +68,16 @@
    width: 200px;
 }
 
+#hide-sidebar-view{
+   margin-left: 5px;
+}
+
+#addContact{
+   display: none;
+}
+
 .header {
-   width: 100%;
+   width: 95%;
    height: 60px;
    font-size: 30px;
    padding: 10px;
@@ -76,11 +85,20 @@
 }
 
 input,select{
-   height: 30px;
-   font-size: 20px;
+   height: 25px;
+   font-size: 18px;
+   border-radius: 2px;
    background-color: #1a1a1a;
    border: 1px solid rgb(71, 70, 70);
    color: white;
+}
+
+select{
+   border: 0;
+}
+
+input{
+   padding-left: 5px;
 }
 
 [btn-danger]{

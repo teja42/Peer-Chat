@@ -19,7 +19,8 @@ module.exports = class {
                const Rsa = require("node-rsa");
                let keyPair = new Rsa({b:x});
                let pri = keyPair.exportKey("pkcs1-private-pem");
-               resolve(pri);
+               let pub = keyPair.exportKey("pkcs1-public-pem");
+               resolve({pri,pub});
             });  
          });
          thread.send(keylength);

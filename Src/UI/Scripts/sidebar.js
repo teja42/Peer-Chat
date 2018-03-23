@@ -1,33 +1,37 @@
-(()=>{
-   let allUsers = $("#allUsers");
-   let view = $("#sidebar-item-view");
-   let main = $("#main");
-   let mainView = $("#main-view");
-   let eKeys = $("#eKeys");
-   let eKeyView = $("#eKey-view");
+let allUsers = $("#allUsers");
+let view = $("#sidebar-item-view");
+let main = $("#main");
+let mainView = $("#main-view");
+let eKeys = $("#eKeys");
+let eKeyView = $("#eKey-view");
+let _hideSidebarView = $("#hide-sidebar-view");
+let addContact = $("#addContact");
 
-   // Events
-   let eKeyEvent = new CustomEvent("ekeyopened");
+let currentDisplayingItem = mainView;
+let hideCurrentDisplayingItem = ()=>currentDisplayingItem.style.display = "none";
+let displayItem = (e)=>{
+   hideCurrentDisplayingItem();
+   e.style.display = "block";
+   currentDisplayingItem = e;
+}
 
-   allUsers.onclick = (e)=>{
-      view.style.width = window.getComputedStyle(view).width=="200px"?(()=>{
-         main.style.marginLeft = "50px";
-         return "0";
-      })():(()=>{
-         main.style.marginLeft = "250px";
-         return "200px";
-      })();
-   }
+let toogleSidebarView = ()=>{
+   view.style.width = window.getComputedStyle(view).width=="200px"?(()=>{
+      main.style.marginLeft = "50px";
+      return "0";
+   })():(()=>{
+      main.style.marginLeft = "250px";
+      return "200px";
+   })();
+}
 
-   eKeys.onclick = (e)=>{
-      mainView.style.display == "none"?(()=>{
-         mainView.style.display = "block";
-         eKeyView.style.display = "none";
-      })():(()=>{
-         mainView.style.display = "none";
-         eKeyView.style.display = "block";
-         window.dispatchEvent(eKeyEvent);
-      })();
-   }
+let eKeyEvent = new CustomEvent("ekeyopened");
 
-})();
+$("#addUser").onclick = displayItem.bind(this,addContact);
+
+_hideSidebarView.onclick = toogleSidebarView;
+document.onkeydown  = (e)=>{
+   if(e.keyCode== 27) toogleSidebarView();
+}
+
+eKeys.onclick = displayItem.bind(this,eKeyView);

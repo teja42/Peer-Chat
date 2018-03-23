@@ -32,16 +32,24 @@ module.exports = class { // A Class to manage connections.
 
       server.listen(4250,()=>process.$event.emit("server-online"));
 
-      ipcMain.on("eKey:u:genNewKey",async (key)=>{
+      ipcMain.on("eKey:u:genNewKey",async (evt,key)=>{
+         console.log(key);
          if(key.algo == 'rsa'){
-            let priKey = await cipher.generateNewRsaPair(key.length);
+            console.log("Requested new rsa key gen");
+            let keys = await cipher.generateNewRsaPair(key.length);
             let db = await dbMan.addeKey({
-               key: priKey,
-               algo: key.algo,
-               length: key.length
+               keys,
+               algo: `${key.algo}_${key.length}`,
+               knc: key.knc
             });
-            this.mainWindow.webContents.send("eKey:s:genNewKey",db);
+            this.mainWindow.webContents.send("eKey:s:genNewKey");
+            this.mainWindow.webContents.send("eKey:s:getKeys",[db]);
          }
+      });
+
+      ipcMain.on("eKey:u:getKeys",async (evt,none)=>{
+         let docs = await dbMan.geteKeys();
+         this.mainWindow.webContents.send("eKey:s:getKeys",docs);
       });
 
    }
