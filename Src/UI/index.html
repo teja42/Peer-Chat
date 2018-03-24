@@ -63,7 +63,7 @@
                   <option value="rsa_4096">RSA 4096</option>
                </select>
             </h3><br>
-            <h3>Key Nick Name : <form id="eKey-newKnc-form">
+            <h3>Key Name : <form id="eKey-newKnc-form">
                   <input id="eKey-newKnc" type="text" required>
             </form> </h3>
             <button btn-blue id="eKey-genBtn">Generate</button>
@@ -83,9 +83,17 @@
 
 <script type="template/text" id="eKey-template">
    <div class="eKey-view-key">
-      <h3>Key Nick Name : {{knc}}</h3><br>
-      <h3>Public Key : <br> <p>{{pubKey}}</p></h3> <br>
-      <h3>Private Key : <br> <p>{{priKey}}</p></h3> <br>
+      <h3>Key Name : {{knc}}</h3><br>
+		<h3>Public Key : 
+			<a onclick="javascript:saveKey.call(this,`{{id}}_pub`)">
+				<i class="small-icon ion-ios-download"></i>
+			</a>
+		</h3> <br>
+      <h3>Private Key : 
+			<a onclick="javascript:saveKey.call(this,`{{id}}_pri`)">
+				<i class="small-icon ion-ios-download"></i>
+			</a>
+		</h3> <br>
       <button xid="{{id}}" btn-danger>Delete</button>
    </div>
 </script>

@@ -3,7 +3,7 @@
 let app = require('express')();
 let server = require('http').createServer(app);
 const socketIOClient = require("socket.io-client");
-const {ipcMain} = require("electron");
+const {ipcMain,dialog} = require("electron");
 
 // Custom Modules
 let cipher = new(require("./cipher"))();
@@ -37,7 +37,7 @@ module.exports = class { // A Class to manage connections.
          if(key.algo == 'rsa'){
             console.log("Requested new rsa key gen");
             let keys = await cipher.generateNewRsaPair(key.length);
-            let db = await dbMan.addeKey({
+            let db = await dbMan.addDoc('eKeys',{
                keys,
                algo: `${key.algo}_${key.length}`,
                knc: key.knc
@@ -48,8 +48,31 @@ module.exports = class { // A Class to manage connections.
       });
 
       ipcMain.on("eKey:u:getKeys",async (evt,none)=>{
-         let docs = await dbMan.geteKeys();
+         let docs = await dbMan.getDocs('eKeys');
          this.mainWindow.webContents.send("eKey:s:getKeys",docs);
+      });
+
+      ipcMain.on("saveKey",(evt,msg)=>{
+         let [id,nature] = msg.split("_");
+         console.log(id,nature);
+         dialog.showSaveDialog(this.mainWindow,{
+            title: "Select a location to save the key to.",
+            filters:[{
+               name: `Cretificate`,
+               extensions: ["pem"]
+            }]
+         },async (path)=>{
+            try{
+               dbMan.saveKeyToDisk(id,nature,path);
+            }catch(e){
+               dialog.showMessageBox(this.mainWindow,{
+                  type: "error",
+                  buttons: ["ok"],
+                  title: "Rigel Chat : Error Occured",
+                  message: "An error occured while trying to save the key to disk"
+               });
+            }
+         });
       });
 
    }
