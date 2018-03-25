@@ -22,54 +22,19 @@
 
 #sidebar>*{
    display:inline-block;
+   height: 100vh;
 }
 
 #sidebar-icons{
    width: 48px;
    background-color: #141414;
    border-right: 2px solid #3632f1;
-   height: 100%;
-}
-
-i{
-   font-size: 40px;
-   padding-left: 5px;
-   color: #e6e6e6;
-}
-
-i:hover{
-   color: #ffffff;
-   cursor: pointer;
-}
-
-.small-icon{
-   font-size: 30px;
-}
-
-.tooltip {
-   position: relative;
-   display: inline-block;
-}
-
-.tooltip .tooltiptext {
-   visibility: hidden;
-   background-color: black;
-   color: #fff;
-   text-align: center;
-   padding: 5px;
-   font-size: 14px;
-   position: absolute;
-   top: 5px;
-   left: 105%; 
-}
-
-.tooltip:hover .tooltiptext {
-   visibility: visible;
-   z-index: 9999;
+   position: fixed;
 }
 
 #sidebar-item-view{
    width: 200px;
+   margin-left: 50px;
 }
 
 #hide-sidebar-view{
@@ -90,7 +55,7 @@ i:hover{
 
 input,select{
    height: 25px;
-   font-size: 18px;
+   font-size: 15px;
    border-radius: 2px;
    background-color: #1a1a1a;
    border: 1px solid rgb(71, 70, 70);
@@ -99,6 +64,8 @@ input,select{
 
 select{
    border: 0;
+   padding: 0;
+   outline: 0;
 }
 
 input{
@@ -120,5 +87,9 @@ button{
    padding: 5px;
    height: 30px;
    cursor: pointer;
-   font-size: 20px;
+   font-size: 15px;
+}
+
+.error-form-container>*{
+   color: red;
 }

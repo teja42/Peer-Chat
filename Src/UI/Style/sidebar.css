@@ -1,4 +1,5 @@
-#eKey-view{
+
+#main>*{
    display: none;
 }
 
@@ -15,5 +16,13 @@
    margin: 10px;
    border: 1px solid #b4b4b4;
    width: 60%;
+   border-radius: 5px;
+}
+
+.contact{
+   margin: 10px 2px;
+   background-color: darkslategray;
+   padding: 2px;
+   cursor: pointer;
    border-radius: 2px;
 }

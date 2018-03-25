@@ -49,9 +49,26 @@ ipcRenderer.on("eKey:s:getKeys",(evt,docs)=>{
    }
 });
 
-// General purpose functions.
-
 function saveKey(id){
    ipcRenderer.send("saveKey",id);
    return false;
+}
+
+let addContactForm = $("#addContact-form");
+
+$("#addContact-btn").onclick = ()=>{
+   if(!addContactForm.checkValidity()) 
+      return printFormError("#addContact-form-error","Fill all the details to proceed.");
+   console.log("Form Valid");
+   let file = $("input[type=file]").files[0];
+   let nickname = $("#addContact-nicename").value;
+   let con = $("#addContact-con").value;
+   let fileReader = new FileReader();
+   fileReader.onload = ()=>{
+      ipcRenderer.send("addContact:u",{
+         pubkey:fileReader.result,nickname,con,lastConnected: "Never"
+      });
+      printFormError("#addContact-form-error",null,true);
+   }
+   fileReader.readAsText(file);
 }

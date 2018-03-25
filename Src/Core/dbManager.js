@@ -5,7 +5,8 @@ const fs = require("fs");
 
 let DB = {
    msg : new nedb({filename: `${process.DATA_DIR}msg.db`,autoload: true}),
-   eKeys : new nedb({filename: `${process.DATA_DIR}eKeys.db`,autoload:true})
+   eKeys : new nedb({filename: `${process.DATA_DIR}eKeys.db`,autoload:true}),
+   contacts : new nedb({filename: `${process.DATA_DIR}contacts.db`,autoload:true})
 }
 
 module.exports = class {

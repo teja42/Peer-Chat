@@ -7,7 +7,7 @@
    <link rel="stylesheet" type="text/css" href="./Style/common.css">
    <link rel="stylesheet" type="text/css" href="./Style/ionicons.min.css">
    <link rel="stylesheet" type="text/css" href="./Style/index.css">
-   <link rel="stylesheet" type="text/css" href="./Style/eKey.css">
+   <link rel="stylesheet" type="text/css" href="./Style/sidebar.css">
 </head>
 <body>
    <div id="sidebar">
@@ -29,12 +29,21 @@
                <span class="tooltiptext">Hide sidebar view. Use Esc as shortcut</span>
          </i>
 
-      </div>
+		</div>
+		
       <div id="sidebar-item-view">
+			<h3 x-center>All Contacts</h3>
+			<input type="text" id="contact-search" placeholder="search"/>
+
+			<div id="contact-list">
+				<!-- All contacts render here dynamically with mustache.js -->
+			</div>
+
       </div>
    </div>
 
    <div id="main">
+
       <div id="main-view">
          Main View
       </div>
@@ -43,10 +52,16 @@
          <div class="header">
             <h3>Add Contact</h3>
          </div>
-         <div> <br>
-            <h3>Nickname : <input type="text" placeholder="nick"></h3> <br>
-            <h3>Connection : <input type="text" placeholder="8.8.8.8:4250"></h3><br>
-            <h3>Public key : (.pem file) <br><input type="file" accept=".pem"></h3>
+			<div> <br>
+				<form id="addContact-form">
+					<h3>Nickname : <input id="addContact-nicename" required type="text" placeholder="nick"></h3> <br>
+					<h3>Connection : <input required id="addContact-con" type="text" placeholder="8.8.8.8:4250"></h3><br>
+					<h3>Public key (.pem file) : <input required type="file" accept=".pem"></h3>
+				</form>
+				<button id="addContact-btn" btn-blue>Add</button>
+				<div class="error-form-container">
+					<h4 id="addContact-form-error"></h4>
+				</div>
          </div>
       </div>
 
@@ -71,15 +86,19 @@
 
          <!-- Encryption Key div's load here with mustache.js -->
       </div>
+
+      <div id="viewContact">
+			<div class="header">Manage Contact</div>
+			<div x-divCenter class="viewContactMain">
+				<h3></h3>
+			</div>
+      </div>
+
    </div>
 
 </body>
 
 <script src="./Scripts/mustache.min.js"></script>
-
-<script src="./Scripts/common.js"></script>
-<script src="./Scripts/sidebar.js"></script>
-<script src="./Scripts/eKeys.js"></script>
 
 <script type="template/text" id="eKey-template">
    <div class="eKey-view-key">
@@ -97,5 +116,24 @@
       <button xid="{{id}}" btn-danger>Delete</button>
    </div>
 </script>
+
+<script type="template/text" id="contact-template">
+	<div class="contact" xi-contact xid={{xid}}>
+		<h4 x-center>{{name}}</h4>
+		<h4>Status : <span x-{{color}}>{{status}}</span></h4>
+		<h4>Last Connected : {{lastConnected}}</h4>
+		<a href="javascript:showEditContact('{{xid}}')" x-preventClick>
+			<i style="font-size:20px" class="ion-edit"></i>
+		</a>
+		<a href="javascript:deleteContact('{{xid}}')" x-preventClick>
+			<i style="font-size:20px" class="ion-trash-a"></i>
+		</a>
+	</div>
+</script>
+
+<script src="./Scripts/common.js"></script>
+<script src="./Scripts/sidebar.js"></script>
+<script src="./Scripts/sidebar_view.js"></script>
+<script src="./Scripts/contacts.js"></script>
 
 </html>

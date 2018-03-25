@@ -28,6 +28,59 @@ body{
    width: 10px;
 }
 
+
+i{
+   font-size: 40px;
+   padding-left: 5px;
+   color: #e6e6e6;
+}
+
+i:hover{
+   color: #ffffff;
+   cursor: pointer;
+}
+
+.small-icon{
+   font-size: 30px;
+}
+
+.tooltip {
+   position: relative;
+   display: inline-block;
+}
+
+.tooltip .tooltiptext {
+   visibility: hidden;
+   background-color: black;
+   color: #fff;
+   text-align: center;
+   padding: 5px;
+   font-size: 14px;
+   position: absolute;
+   top: 5px;
+   left: 105%; 
+   z-index: 9999;
+}
+
+.tooltip:hover .tooltiptext {
+   visibility: visible;
+   z-index: 9999;
+}
+
 [x-center]{
    text-align: center;
+}
+
+[x-divCenter]{
+   width:80%;
+   margin: 3% 10%;
+   padding: 5px;
+}
+
+[x-blue]{
+   color: blue;
+}
+
+[x-red]{
+   color: red;
 }

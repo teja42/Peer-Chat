@@ -1,5 +1,5 @@
 let allUsers = $("#allUsers");
-let view = $("#sidebar-item-view");
+let sideBarView = $("#sidebar-item-view");
 let main = $("#main");
 let mainView = $("#main-view");
 let eKeys = $("#eKeys");
@@ -16,7 +16,7 @@ let displayItem = (e)=>{
 }
 
 let toogleSidebarView = ()=>{
-   view.style.width = window.getComputedStyle(view).width=="200px"?(()=>{
+   sideBarView.style.width = window.getComputedStyle(sideBarView).width=="200px"?(()=>{
       main.style.marginLeft = "50px";
       return "0";
    })():(()=>{
