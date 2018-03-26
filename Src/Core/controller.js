@@ -11,6 +11,8 @@ let dbMan = new(require("./dbManager"))();
 
 let sendToMw;
 
+let connectedClients = [];
+
 class Controller {
    constructor(mainWin){
 
@@ -19,24 +21,33 @@ class Controller {
       }
 
       let io = require('socket.io')(server);
-      // let ioc = new socketIOClient("http://localhost:4250",{
-      //    transports: ['websocket']
-      // });
 
-      io.on('connection', (socket)=>{
+      io.on('connection', async (socket)=>{
+
+         console.log("New Connection");
+
          let userData;
-         console.log(socket.id);
-         socket.on("userData",(data)=>userData=data);
+         socket.on("handshake:challenge",(data)=>{
+            this.processHandshakeRequest(data,socket);
+         });
 
-         socket.emit("userData",{});
+         socket.on("handshake:challenge:completed",(enc)=>{
+            let x = cipher.rsaUnsign(contact.pubkey,enc);
+            if(x==msgToHash){
+               console.log("Handshake challenge accepted!");
+               ioc.emit("handshake:challenge",)
+            }
+         });
 
          socket.on("message",(msg)=>{
             console.log(cipher.decrypt(userData.key,msg));
          });
+
+         socket.on("error",()=>console.log("Error"));
          
       });
 
-      server.listen(4250,()=>process.$event.emit("server-online"));
+      server.listen(process.argv[2] || 4250,()=>process.$event.emit("server-online"));
 
       ipcMain.on("eKey:u:genNewKey",this.genRsaPair);
 
@@ -50,6 +61,78 @@ class Controller {
       });
       
       ipcMain.on("getContacts:u",this.sendContacts);
+
+      ipcMain.on("connectToAddress",this.connect);
+   }
+
+   async connect(evt,contactId){
+      console.log(contactId);
+
+      let Data = {};
+      Data.aesKey = cipher.randomBytes(32);
+
+      let contact = (await dbMan.getDocs('contacts',{_id:contactId}))[0];
+      console.log(contact);
+      if(!contact) return console.log("Error! Contact not found in DB.");
+      let ourKeyPair = (await dbMan.getDocs('eKeys',{_id: contact.keyToUse}))[0].keys;
+
+      let ioc = new socketIOClient("http://"+contact.con);
+      let msgToSign = cipher.randomBytes(16);
+
+      ioc.emit("handshake:challenge",{
+         pub: contact.pubkey, // public key of other person
+         pub2: ourKeyPair.pub, //our public key
+         msgToSign,
+         aesKey: cipher.rsaEncrypt(ourKeyPair.pub,Data.aesKey)
+      });
+
+      ioc.on("handshake:challenge:completed",(enc)=>{
+         if(cipher.verify(contact.pubkey,enc,msgToSign)){
+            console.log("Handshake challenge accepted!");
+            
+         } else {
+            ioc = null;
+            console.log("Handshake challenge rejected! Disconnecting now!");
+         }
+      });
+
+      ioc.on("connect_error",(e)=>console.log(e));
+
+      ioc.on("connect_timeout",(e)=>console.log(e));
+
+      ioc.on("handshake:challenge",(data)=>{
+         console.log("data : ",data);
+         this.processHandshakeRequest(data,ioc);
+      });
+
+   }
+
+   async processHandshakeRequest(data,socket){
+      console.log("New handshake request.")
+      let keyPairToUse = (await dbMan.getDocs('eKeys',{
+         "keys.pub":data.pub
+      }))[0];
+      if(!keyPairToUse){
+         socket.emit("error");
+         console.log("Assumed public key by other user does not exist in our DB.");
+         return socket.disconnect();
+      }
+      let xidDocs = await dbMan.getDocs('contacts',{
+         pubkey: data.pub2
+      });
+      console.log(xidDocs[0].keyToUse,keyPairToUse._id);
+      if(xidDocs.length==0 || xidDocs[0].keyToUse!=keyPairToUse._id){
+         socket.emit("pending");
+         console.log("Key to use not defined. Pending.");
+         return socket.disconnect();
+      }
+      let enc = cipher.sign(keyPairToUse.keys.pri,data.msgToSign);
+      socket.emit("handshake:challenge:completed",enc);
+      console.log("Sucessfully executed handshake challange.");
+   }
+
+   async addToPendingList(data){
+
    }
 
    async genRsaPair(evt,key){

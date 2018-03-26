@@ -7,7 +7,8 @@
    <link rel="stylesheet" type="text/css" href="./Style/common.css">
    <link rel="stylesheet" type="text/css" href="./Style/ionicons.min.css">
    <link rel="stylesheet" type="text/css" href="./Style/index.css">
-   <link rel="stylesheet" type="text/css" href="./Style/sidebar.css">
+	<link rel="stylesheet" type="text/css" href="./Style/sidebar.css">
+	<link rel="stylesheet" type="text/css" href="./Style/main.css">
 </head>
 <body>
    <div id="sidebar">
@@ -56,7 +57,8 @@
 				<form id="addContact-form">
 					<h3>Nickname : <input id="addContact-nicename" required type="text" placeholder="nick"></h3> <br>
 					<h3>Connection : <input required id="addContact-con" type="text" placeholder="8.8.8.8:4250"></h3><br>
-					<h3>Public key (.pem file) : <input required type="file" accept=".pem"></h3>
+					<h3>Public key of other person (.pem file) : <input required type="file" accept=".pem"></h3> <br/>
+					<h3>Select which key to use : <select required id="addContact-select"></select></h3>
 				</form>
 				<button id="addContact-btn" btn-blue>Add</button>
 				<div class="error-form-container">
@@ -87,12 +89,7 @@
          <!-- Encryption Key div's load here with mustache.js -->
       </div>
 
-      <div id="viewContact">
-			<div class="header">Manage Contact</div>
-			<div x-divCenter class="viewContactMain">
-				<h3></h3>
-			</div>
-      </div>
+      <div id="viewContact"></div>
 
    </div>
 
@@ -131,9 +128,20 @@
 	</div>
 </script>
 
+<script type="template/text" id="viewContact-template">
+	<div id="viewContact-status">
+		<a x-aBtn href="javascript:toogleConnection('{{id}}')">Connect</a>
+		<span>Connecting</span>
+	</div>
+	
+	<div id="viewContact-main">
+
+	</div>
+</script>
+
 <script src="./Scripts/common.js"></script>
 <script src="./Scripts/sidebar.js"></script>
-<script src="./Scripts/sidebar_view.js"></script>
 <script src="./Scripts/contacts.js"></script>
+<script src="./Scripts/sidebar_view.js"></script>
 
 </html>

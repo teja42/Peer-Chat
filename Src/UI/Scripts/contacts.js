@@ -5,6 +5,8 @@
 let contactTemplate = $("#contact-template").innerHTML;
 let contactList = $("#contact-list");
 let viewContactDiv = $("#viewContact");
+let keyToUseSelect = $("#addContact-select");
+let viewContactTemplate = $("#viewContact-template").innerHTML;
 
 ipcRenderer.on("getContacts:s",(evt,docs)=>{
    contactList.innerHTML = null;
@@ -36,7 +38,12 @@ sideBarView.onclick = (e)=>{
 }
 
 function viewContact(id){
+   console.log(id);
    ipcRenderer.send("getContact:u");
+   viewContactDiv.innerHTML = null;
+   viewContactDiv.insertAdjacentHTML("beforeend",Mustache.render(
+      viewContactTemplate,{id}
+   ));
    displayItem(viewContactDiv);
 }
 
@@ -46,6 +53,10 @@ function showEditContact(id){
 
 function deleteContact(id){
    console.log("deleteContact : ",id);
+}
+
+function toogleConnection(id){
+   ipcRenderer.send("connectToAddress",id);
 }
 
 ipcRenderer.send("getContacts:u");

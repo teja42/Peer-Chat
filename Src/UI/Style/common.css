@@ -84,3 +84,12 @@ i:hover{
 [x-red]{
    color: red;
 }
+
+[x-aBtn]{
+   height: 20px;
+   background-color: rgb(245, 242, 242);
+   color: black;
+   text-decoration: none;
+   padding: 3px;
+   margin: 15px 40px 0 5px;
+}

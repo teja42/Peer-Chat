@@ -46,6 +46,8 @@ ipcRenderer.on("eKey:s:getKeys",(evt,docs)=>{
             knc: docs[i].knc
          }
       ));
+      keyToUseSelect.insertAdjacentHTML("beforeend",
+      `<option value='${docs[i]._id}'>${docs[i].knc}</option>`);
    }
 });
 
@@ -64,9 +66,10 @@ $("#addContact-btn").onclick = ()=>{
    let nickname = $("#addContact-nicename").value;
    let con = $("#addContact-con").value;
    let fileReader = new FileReader();
+   let k = keyToUseSelect.value;
    fileReader.onload = ()=>{
       ipcRenderer.send("addContact:u",{
-         pubkey:fileReader.result,nickname,con,lastConnected: "Never"
+         pubkey:fileReader.result,nickname,con,lastConnected: "Never",keyToUse:k
       });
       printFormError("#addContact-form-error",null,true);
    }
