@@ -1,0 +1,5 @@
+Data = {
+   aesKey,
+   pub, // our public key
+   pub2 // other persons public key
+}

@@ -22,20 +22,39 @@ class Controller {
 
       let io = require('socket.io')(server);
 
-      io.on('connection', async (socket)=>{
+      io.on('connection', (socket)=>{
 
-         console.log("New Connection");
+         console.log("New Connection.");
 
-         let userData;
-         socket.on("handshake:challenge",(data)=>{
-            this.processHandshakeRequest(data,socket);
+         let Data;
+         let msgToSign = cipher.randomBytes(8);
+
+         socket.on("handshake:challenge", async (data)=>{
+            try{
+               console.log("socket.on hs");
+               Data = await Controller.getContactAndVerify("pubkey",data.pub2);
+               Data.pub2 = data.pub; // overwrite pub2
+               Data.aesKey = data.aesKey; //overwrite aesKey
+               await Controller.processHandshakeRequest(data,socket); 
+
+               socket.emit("handshake:challenge",{
+                  pub: Data.pub,
+                  pub2: Data.pub2,
+                  msgToSign
+               });
+
+            }catch(e){
+               // Report to UI
+               console.log(e);
+            }
          });
 
          socket.on("handshake:challenge:completed",(enc)=>{
-            let x = cipher.rsaUnsign(contact.pubkey,enc);
-            if(x==msgToHash){
+            if(cipher.verify(Data.pub2,enc,msgToSign)){
                console.log("Handshake challenge accepted!");
-               ioc.emit("handshake:challenge",)
+            } else {
+               ioc = null;
+               console.log("Handshake challenge rejected! Disconnecting now!");
             }
          });
 
@@ -63,54 +82,85 @@ class Controller {
       ipcMain.on("getContacts:u",this.sendContacts);
 
       ipcMain.on("connectToAddress",this.connect);
+
+   }
+
+   static getContactAndVerify(method,data){
+      return new Promise(async (resolve,reject)=>{
+         if(method=="contactId"){
+            try{
+               let contact = (await dbMan.getDocs('contacts',{_id:data}))[0];
+               if(!contact) return reject("Contact Not found in Database.");
+               let ourKeyPair = (await dbMan.getDocs('eKeys',{_id: contact.keyToUse}))[0].keys;
+               resolve ({
+                  pub: ourKeyPair.pub,
+                  pub2: contact.pubkey,
+                  pri: ourKeyPair.pri,
+                  con: contact.con
+               });
+            } catch(e){
+               reject("An Error Occured.");
+            }
+         } else if(method=="pubkey"){
+            try{
+               let eKeyDoc = (await dbMan.getDocs('eKeys',{"keys.pub":data}))[0];
+               resolve({
+                  pub: data,
+                  pub2: eKeyDoc.pub,
+                  pri: eKeyDoc.pri
+               });
+            }catch(e){
+               reject("An Error Occured.");
+            }
+         }
+      });
    }
 
    async connect(evt,contactId){
-      console.log(contactId);
-
       let Data = {};
-      Data.aesKey = cipher.randomBytes(32);
+      try{
+         Data = await Controller.getContactAndVerify("contactId",contactId);
+      } catch(e){
+         console.log("Error : ",e);
+         // Report it in UI
+      }
+      Data.aesKey = cipher.randomBytes(8);
 
-      let contact = (await dbMan.getDocs('contacts',{_id:contactId}))[0];
-      console.log(contact);
-      if(!contact) return console.log("Error! Contact not found in DB.");
-      let ourKeyPair = (await dbMan.getDocs('eKeys',{_id: contact.keyToUse}))[0].keys;
-
-      let ioc = new socketIOClient("http://"+contact.con);
-      let msgToSign = cipher.randomBytes(16);
+      let ioc = new socketIOClient("http://"+Data.con,{
+         transports: ['websocket']
+      });
+      let msgToSign = cipher.randomBytes(8);
 
       ioc.emit("handshake:challenge",{
-         pub: contact.pubkey, // public key of other person
-         pub2: ourKeyPair.pub, //our public key
+         pub: Data.pub,
+         pub2: Data.pub2,
          msgToSign,
-         aesKey: cipher.rsaEncrypt(ourKeyPair.pub,Data.aesKey)
+         aesKey: cipher.rsaEncrypt(Data.pub2,Data.aesKey) // Encrypt with other's pub key.
+      });
+
+      ioc.on("handshake:challenge", async (data)=>{
+         await Controller.processHandshakeRequest(data,ioc);
       });
 
       ioc.on("handshake:challenge:completed",(enc)=>{
-         if(cipher.verify(contact.pubkey,enc,msgToSign)){
+         if(cipher.verify(Data.pub2,enc,msgToSign)){
             console.log("Handshake challenge accepted!");
-            
          } else {
             ioc = null;
             console.log("Handshake challenge rejected! Disconnecting now!");
          }
       });
 
-      ioc.on("connect_error",(e)=>console.log(e));
+      ioc.on("connect_error",(e)=>console.log("Connect Error : ",e));
 
-      ioc.on("connect_timeout",(e)=>console.log(e));
-
-      ioc.on("handshake:challenge",(data)=>{
-         console.log("data : ",data);
-         this.processHandshakeRequest(data,ioc);
-      });
+      ioc.on("connect_timeout",(e)=>console.log("Timeour e : ",e));
 
    }
 
-   async processHandshakeRequest(data,socket){
-      console.log("New handshake request.")
+   static async processHandshakeRequest(data,socket){
+      console.log("New handshake request.");
       let keyPairToUse = (await dbMan.getDocs('eKeys',{
-         "keys.pub":data.pub
+         "keys.pub":data.pub2
       }))[0];
       if(!keyPairToUse){
          socket.emit("error");
@@ -118,9 +168,8 @@ class Controller {
          return socket.disconnect();
       }
       let xidDocs = await dbMan.getDocs('contacts',{
-         pubkey: data.pub2
+         pubkey: data.pub
       });
-      console.log(xidDocs[0].keyToUse,keyPairToUse._id);
       if(xidDocs.length==0 || xidDocs[0].keyToUse!=keyPairToUse._id){
          socket.emit("pending");
          console.log("Key to use not defined. Pending.");
@@ -155,7 +204,7 @@ class Controller {
       sendToMw("eKey:s:getKeys",docs);
    }
 
-   async saveKey(evt,msg){
+   saveKey(evt,msg){
       let [id,nature] = msg.split("_");
       dialog.showSaveDialog(this.mainWindow,{
          title: "Select a location to save the key to.",
@@ -165,12 +214,12 @@ class Controller {
          }]
       },async (path)=>{
          try{
-            dbMan.saveKeyToDisk(id,nature,path);
+            await dbMan.saveKeyToDisk(id,nature,path);
          }catch(e){
             dialog.showMessageBox(this.mainWindow,{
                type: "error",
                buttons: ["ok"],
-               title: "Rigel Chat : Error Occured",
+               title: "Rigel Chat - Error Occured",
                message: "An error occured while trying to save the key to disk",
                buttons: ['Ok']
             });
