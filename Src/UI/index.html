@@ -9,94 +9,88 @@
    <link rel="stylesheet" type="text/css" href="./Style/index.css">
 	<link rel="stylesheet" type="text/css" href="./Style/sidebar.css">
 	<link rel="stylesheet" type="text/css" href="./Style/main.css">
+	<link rel="stylesheet" type="text/css" href="./Style/contact.css">
 </head>
 <body>
-   <div id="sidebar">
-      <div id="sidebar-icons">
+   <div id="wrapper">
+      <div id="sidebar">
+         <div id="sidebar-icons">
+         
+            <i id="addUser" class="ion-person-add tooltip">
+                  <span class="tooltiptext">Add new contact</span>
+            </i>
 
-         <i id="addUser" class="ion-person-add tooltip">
-               <span class="tooltiptext">Add new contact</span>
-         </i>
+            <i id="allUsers" class="ion-person-stalker tooltip">
+                  <span class="tooltiptext">View all contacts</span>
+            </i>
+      
+            <i id="eKeys" class="ion-key tooltip">
+               <span class="tooltiptext">Manage encryption keys</span>
+            </i>
+                  
+         </div>
 
-         <i id="allUsers" class="ion-person-stalker tooltip">
-            <span class="tooltiptext">View all contacts</span>
-         </i>
+         <div id="sidebar-item-view">
+            <h3 x-center>All Contacts</h3>
+            <!-- <input type="text" id="contact-search" placeholder="search"/> -->
 
-         <i id="eKeys" class="ion-key tooltip">
-            <span class="tooltiptext">Manage encryption keys</span>
-         </i>
+            <div id="contact-list">
+            <!-- All contacts render here dynamically with mustache.js -->
+            </div>
+      
+         </div>
 
-         <i id="hide-sidebar-view" class="ion-ios-arrow-back tooltip">
-               <span class="tooltiptext">Hide sidebar view. Use Esc as shortcut</span>
-         </i>
+      </div>
+         
+      <div id="main">
 
-		</div>
-		
-      <div id="sidebar-item-view">
-			<h3 x-center>All Contacts</h3>
-			<input type="text" id="contact-search" placeholder="search"/>
+         <div id="main-view"></div>
 
-			<div id="contact-list">
-				<!-- All contacts render here dynamically with mustache.js -->
-			</div>
+         <div id="addContact">
+            <header>Add Contact</header>
+            <div> <br>
+               <form id="addContact-form">
+                  <h3>Nickname : <input id="addContact-nicename" required type="text" placeholder="nick"></h3> <br>
+                  <h3>Connection : <input required id="addContact-con" type="text" placeholder="8.8.8.8:4250"></h3><br>
+                  <h3>Public key of other person (.pem file) : <input required type="file" accept=".pem"></h3> <br/>
+                  <h3>Select which key to use : <select required id="addContact-select"></select></h3>
+               </form>
+               <button id="addContact-btn" btn-blue>Add</button>
+               <div class="error-form-container">
+                  <h4 id="addContact-form-error"></h4>
+               </div>
+            </div>
+         </div>
+         
+         <div id="eKey-view">
+            <header>Manage Your Encryption Keys</header>
+         
+            <div class="eKey-view-key">
+               <h3>Generate New Key</h3> <br>
+               <h3>Algorithm : 
+                  <select required id="eKey-selectAlgo"> 
+                     <option value="rsa_2048">RSA 2048</option>
+                     <option value="rsa_4096">RSA 4096</option>
+                  </select>
+                  </h3><br>
+                  <h3>Key Name : <form id="eKey-newKnc-form">
+                     <input id="eKey-newKnc" type="text" required>
+                  </form> </h3>
+                  <button btn-blue id="eKey-genBtn">Generate</button>
+            </div>
+         
+               <!-- Encryption Key div's load here with mustache.js -->
+         </div>
 
+         <div id="viewContact">
+         </div>    
+              
       </div>
    </div>
-
-   <div id="main">
-
-      <div id="main-view">
-         Main View
-      </div>
-
-      <div id="addContact">
-         <div class="header">
-            <h3>Add Contact</h3>
-         </div>
-			<div> <br>
-				<form id="addContact-form">
-					<h3>Nickname : <input id="addContact-nicename" required type="text" placeholder="nick"></h3> <br>
-					<h3>Connection : <input required id="addContact-con" type="text" placeholder="8.8.8.8:4250"></h3><br>
-					<h3>Public key of other person (.pem file) : <input required type="file" accept=".pem"></h3> <br/>
-					<h3>Select which key to use : <select required id="addContact-select"></select></h3>
-				</form>
-				<button id="addContact-btn" btn-blue>Add</button>
-				<div class="error-form-container">
-					<h4 id="addContact-form-error"></h4>
-				</div>
-         </div>
-      </div>
-
-      <div id="eKey-view">
-         <div class="header">
-            <h3>Manage your Encryption Keys</h3>
-         </div>
-
-         <div class="eKey-view-key">
-            <h3>Generate New Key</h3> <br>
-            <h3>Algorithm : 
-               <select required id="eKey-selectAlgo"> 
-                  <option value="rsa_2048">RSA 2048</option>
-                  <option value="rsa_4096">RSA 4096</option>
-               </select>
-            </h3><br>
-            <h3>Key Name : <form id="eKey-newKnc-form">
-                  <input id="eKey-newKnc" type="text" required>
-            </form> </h3>
-            <button btn-blue id="eKey-genBtn">Generate</button>
-         </div>
-
-         <!-- Encryption Key div's load here with mustache.js -->
-      </div>
-
-      <div id="viewContact"></div>
-
-   </div>
-
 </body>
 
 <script src="./Scripts/mustache.min.js"></script>
-
+<script src="./Scripts/vue.min.js"></script>
 <script type="template/text" id="eKey-template">
    <div class="eKey-view-key">
       <h3>Key Name : {{knc}}</h3><br>
@@ -131,11 +125,14 @@
 <script type="template/text" id="viewContact-template">
 	<div id="viewContact-status">
 		<a x-aBtn href="javascript:toogleConnection('{{id}}')">Connect</a>
-		<span>Connecting</span>
+		<span>Standby</span>
 	</div>
 	
 	<div id="viewContact-main">
-
+      <div id="viewContact-chat"></div>
+		<div id="msg-enter-div">
+			<textarea id="msgEnter" placeholder="Message"></textarea>
+		</div>
 	</div>
 </script>
 

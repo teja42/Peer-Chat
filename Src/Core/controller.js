@@ -31,7 +31,6 @@ class Controller {
 
          socket.on("handshake:challenge", async (data)=>{
             try{
-               console.log("socket.on hs");
                Data = await Controller.getContactAndVerify("pubkey",data.pub2);
                Data.pub2 = data.pub; // overwrite pub2
                Data.aesKey = data.aesKey; //overwrite aesKey
@@ -51,15 +50,27 @@ class Controller {
 
          socket.on("handshake:challenge:completed",(enc)=>{
             if(cipher.verify(Data.pub2,enc,msgToSign)){
-               console.log("Handshake challenge accepted!");
+               console.log("Handshake challenge accepted!. Listening for messages.");
+
+               socket.on("message",(msg)=>{
+                  console.log(cipher.aesDecrypt(Data.aesKey,msg));
+               });
+
+               sendToMw("connectionUpdate",{
+                  _id:Data._id,
+                  status:"Connected",
+                  msg: "Secure Connection Established."
+               });
+
             } else {
+               sendToMw("connectionUpdate",{
+                  _id:Data._id,
+                  status:"Disconnected",
+                  msg: "Handshake Challenge Failed."
+               });
                ioc = null;
                console.log("Handshake challenge rejected! Disconnecting now!");
             }
-         });
-
-         socket.on("message",(msg)=>{
-            console.log(cipher.decrypt(userData.key,msg));
          });
 
          socket.on("error",()=>console.log("Error"));
@@ -96,7 +107,8 @@ class Controller {
                   pub: ourKeyPair.pub,
                   pub2: contact.pubkey,
                   pri: ourKeyPair.pri,
-                  con: contact.con
+                  con: contact.con,
+                  _id: contact._id
                });
             } catch(e){
                reject("An Error Occured.");
@@ -104,10 +116,12 @@ class Controller {
          } else if(method=="pubkey"){
             try{
                let eKeyDoc = (await dbMan.getDocs('eKeys',{"keys.pub":data}))[0];
+               let contact = (await dbMan.getDocs('contacts'),{keyToUse:eKeyDoc._id});
                resolve({
                   pub: data,
                   pub2: eKeyDoc.pub,
-                  pri: eKeyDoc.pri
+                  pri: eKeyDoc.pri,
+                  _id: contact._id
                });
             }catch(e){
                reject("An Error Occured.");
@@ -122,7 +136,11 @@ class Controller {
          Data = await Controller.getContactAndVerify("contactId",contactId);
       } catch(e){
          console.log("Error : ",e);
-         // Report it in UI
+         sendToMw("connectionUpdate",{
+            _id:Data._id,
+            status:"Disconnected",
+            msg: "An Error occured while fetching data from DB."
+         });
       }
       Data.aesKey = cipher.randomBytes(8);
 
@@ -145,15 +163,39 @@ class Controller {
       ioc.on("handshake:challenge:completed",(enc)=>{
          if(cipher.verify(Data.pub2,enc,msgToSign)){
             console.log("Handshake challenge accepted!");
+            sendToMw("connectionUpdate",{
+               _id:Data._id,
+               status:"Connecting",
+               msg: "Hanshake request completed by the remote client."
+            });
          } else {
             ioc = null;
+            sendToMw("connectionUpdate",{
+               _id:Data._id,
+               status:"Disconnected",
+               msg: "Handshake Challenge Failed."
+            });
             console.log("Handshake challenge rejected! Disconnecting now!");
          }
       });
 
-      ioc.on("connect_error",(e)=>console.log("Connect Error : ",e));
+      ioc.on("connect_error",(e)=>{
+         console.log("Connect Error : ",e);
+         sendToMw("connectionUpdate",{
+            _id:Data._id,
+            status:"Disconnected",
+            msg: "Connection lost. Disconnected."
+         });
+      });
 
-      ioc.on("connect_timeout",(e)=>console.log("Timeour e : ",e));
+      ioc.on("connect_timeout",(e)=>{
+         console.log("Timeout e : ",e);
+         sendToMw("connectionUpdate",{
+            _id:Data._id,
+            status:"Disconnected",
+            msg: "Connection timedout."
+         });
+      });
 
    }
 

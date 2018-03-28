@@ -8,6 +8,8 @@ let viewContactDiv = $("#viewContact");
 let keyToUseSelect = $("#addContact-select");
 let viewContactTemplate = $("#viewContact-template").innerHTML;
 
+let vueContacts = {};
+
 ipcRenderer.on("getContacts:s",(evt,docs)=>{
    contactList.innerHTML = null;
    if(docs.length==0) return contactList.innerHTML = "Nothing to display";
@@ -19,12 +21,20 @@ ipcRenderer.on("getContacts:s",(evt,docs)=>{
          status : "Disconnected",
          color: status=="Connected"?"green":"red"
       }));
+      vueContacts[docs[i]._id] = new Vue({
+         el: `[xid='${docs[i]._id}']`,
+         data : {
+            lastConnected: docs[i].lastConnected,
+            status: "Disconnected",
+            color: this.status=="Connected"?"green":"red"
+         }
+      });
    }
 });
 
-ipcRenderer.on("getContact:s",(evt,docs)=>{
-   let doc = docs[0];
-
+ipcRenderer.on("connectionUpdate",(evt,doc)=>{
+   vueContacts[doc._id].status = doc.status;
+   $("#viewContact-status>span").innerHTML = doc.msg;
 });
 
 sideBarView.onclick = (e)=>{
@@ -58,5 +68,7 @@ function deleteContact(id){
 function toogleConnection(id){
    ipcRenderer.send("connectToAddress",id);
 }
+
+
 
 ipcRenderer.send("getContacts:u");
